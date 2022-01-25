@@ -1,6 +1,4 @@
-import imp
 import numpy as np
-from sklearn import metrics
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -10,21 +8,17 @@ tab=['quarter','high', 'close', 'low', 'open', 'percent_change_next_weeks_price'
 
 # read dataset from formatted file
 dataset = pd.read_csv('dataset/dow_jones_index_formatted.data', header=0) # not worth to use if tf can do this better
-filtered = dataset[['high','quarter', 'stock']]
+filtered = dataset[['high','quarter']]
 grouped = filtered.groupby(filtered.quarter)
 
 # split by quarters
 train = grouped.get_group(1)
 test = grouped.get_group(2)
-grouped_stock = test.groupby(test.stock)
-test = grouped_stock.get_group('INTC')
+
 
 # remove useless columns
 train.pop('quarter')
 test.pop('quarter')
-train.pop('stock')
-test.pop('stock')
-
 
 train = train.values
 test = test.values
@@ -40,12 +34,6 @@ i = SAMPLING
 while i < 360:
     train_x.append(training_set_scaled[i-SAMPLING:i, 0])
     train_y.append(training_set_scaled[i,0])
-#    test_x.append(test_set_scaled[i-SAMPLING:i, 0])
-#    test_y.append(test_set_scaled[i, 0])
-#    i += SAMPLING
-
-i = SAMPLING
-while i < 12:
     test_x.append(test_set_scaled[i-SAMPLING:i, 0])
     test_y.append(test_set_scaled[i, 0])
     i += SAMPLING
